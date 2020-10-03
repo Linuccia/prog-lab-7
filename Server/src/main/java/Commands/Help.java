@@ -1,6 +1,7 @@
 package Commands;
 
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +16,7 @@ public class Help extends AbsCommand {
      * @param key
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable help = () -> {
             sendPool.submit(new Sender(key, "help : вывести справку по доступным командам\n"+
                     "info : вывести в стандартный поток вывода информацию о коллекции (тип, дата инициализации, количество элементов и т.д.)\n"+

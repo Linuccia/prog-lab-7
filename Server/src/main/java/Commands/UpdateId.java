@@ -4,6 +4,7 @@ import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.sql.SQLException;
@@ -24,20 +25,17 @@ public class UpdateId extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param args
-     * @param product
-     * @param login
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Integer args, Product product, String login) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable update = () -> {
             if (!(manager.getCollection().size() == 0)) {
                 try {
-                    database.updateById(args, login);
-                    if (manager.getCollection().removeIf(collection -> collection.getId().equals(args) && collection.getLogin().equals(login))) {
-                        product.setId(args);
-                        product.setLogin(login);
-                        manager.getCollection().add(product);
+                    database.updateById(command.getArg(), command.getLogin());
+                    if (manager.getCollection().removeIf(collection -> collection.getId().equals(command.getArg()) && collection.getLogin().equals(command.getLogin()))) {
+                        command.getProduct().setId(command.getArg());
+                        command.getProduct().setLogin(command.getLogin());
+                        manager.getCollection().add(command.getProduct());
                         sendPool.submit(new Sender(key, "Элемент с данным id успешно обновлен"));
                     } else {
                         sendPool.submit(new Sender(key, "Элемента с данным id нет, либо у вас нет доступа к этому элементу"));

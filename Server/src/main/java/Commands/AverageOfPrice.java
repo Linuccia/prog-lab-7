@@ -4,6 +4,7 @@ import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
@@ -21,12 +22,13 @@ public class AverageOfPrice extends AbsCommand {
     /**
      * Метод выводит среднее значение price всех элементов коллекции
      *
+     * @param command
      * @param commandPool
      * @param sendPool
      * @param key
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable averageofprice = () -> {
             double averagePrice;
             if (!(manager.collection.size() == 0)) {

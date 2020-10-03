@@ -3,6 +3,7 @@ package Commands;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.sql.SQLException;
@@ -23,14 +24,13 @@ public class Clear extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param login
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, String login){
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key){
         Runnable clear = () ->{
             try {
-                database.clear(login);
-                if (manager.getCollection().removeIf(col -> col.getLogin().equals(login))) {
+                database.clear(command.getLogin());
+                if (manager.getCollection().removeIf(col -> col.getLogin().equals(command.getLogin()))) {
                     sendPool.submit(new Sender(key, "Удалены все созданные вами элементы"));
                 } else {
                     sendPool.submit(new Sender(key, "В коллекции отсуствуют созданные вами элементы"));

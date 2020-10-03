@@ -2,6 +2,7 @@ package Commands;
 
 import DataClasses.Person;
 import DataClasses.Product;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
@@ -11,10 +12,10 @@ import java.util.concurrent.ExecutorService;
  */
 public abstract class AbsCommand {
 
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
-    } //info, show, average of price,
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
+    }
 
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, String login) {
+    /*public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, String login) {
     } //clear, remove first
 
     public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Integer args) {
@@ -30,6 +31,6 @@ public abstract class AbsCommand {
     } //update by id
 
     public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Person person){
-    } //count by owner
+    } //count by owner*/
 
 }

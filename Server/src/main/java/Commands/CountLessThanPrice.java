@@ -3,6 +3,7 @@ package Commands;
 import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
@@ -21,17 +22,16 @@ public class CountLessThanPrice extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param args
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Integer args) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable countlessthanprice = () -> {
             if (!(manager.collection.size() == 0)) {
                 //int count = 0;
                 //for (Product p: manager.getCollection()){ if (p.getPrice() < args) { count ++; } }
                 Stream<Product> stream = manager.collection.stream();
-                long count = stream.filter(collection -> collection.getPrice() < args).count();
-                sendPool.submit(new Sender(key, "Найдено " + count + " элемент(а/ов), значение цены котор(ых/ого) меньше " + args));
+                long count = stream.filter(collection -> collection.getPrice() < command.getArg()).count();
+                sendPool.submit(new Sender(key, "Найдено " + count + " элемент(а/ов), значение цены котор(ых/ого) меньше " + command.getArg()));
             } else {
                 sendPool.submit(new Sender(key, "Коллекция пуста"));
             }

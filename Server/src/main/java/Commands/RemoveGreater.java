@@ -3,6 +3,7 @@ package Commands;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.sql.SQLException;
@@ -23,17 +24,15 @@ public class RemoveGreater extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param args
-     * @param login
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Integer args, String login) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable removegreater = () -> {
             if (!(manager.getCollection().size() == 0)) {
                 try {
-                    database.deleteGreater(args, login);
+                    database.deleteGreater(command.getArg(), command.getLogin());
                     int oldSize = manager.getCollection().size();
-                    if (manager.getCollection().removeIf(collection -> collection.getPrice() > args && collection.getLogin().equals(login))) {
+                    if (manager.getCollection().removeIf(collection -> collection.getPrice() > command.getArg() && collection.getLogin().equals(command.getLogin()))) {
                         sendPool.submit(new Sender(key, "Был/о удален/о " + (oldSize - manager.collection.size()) + " элемент/ов коллекции"));
                     } else {
                         sendPool.submit(new Sender(key, "Ни одного элемента не удалено"));

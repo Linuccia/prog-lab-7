@@ -2,6 +2,7 @@ package Commands;
 
 import ProgramManager.CollectionManager;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.Date;
@@ -24,7 +25,7 @@ public class Info extends AbsCommand {
      * @param key
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable info = () -> {
             sendPool.submit(new Sender(key, "Тип коллекции: PriorityQueue\n" +
                     "Размер коллекции: " + manager.collection.size() + "\n" +

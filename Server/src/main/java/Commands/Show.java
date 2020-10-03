@@ -4,6 +4,7 @@ import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +26,7 @@ public class Show extends AbsCommand {
      * @param key
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable show = () -> {
             if (manager.collection.size() != 0) {
                 Stream<Product> stream = manager.collection.stream();

@@ -4,6 +4,7 @@ import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.sql.SQLException;
@@ -25,22 +26,21 @@ public class RemoveFirst extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param login
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, String login) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable removefirst = () -> {
             try{
                 if (!(manager.getCollection().size() == 0)){
                     PriorityQueue<Product> colCopy = new PriorityQueue<>();
                     for (Product p: manager.getCollection()) {
-                        if (p.getLogin().equals(login)) {
+                        if (p.getLogin().equals(command.getLogin())) {
                             colCopy.add(p);
                         }
                     }
                     if (!(colCopy.size() == 0)) {
                         Product del = colCopy.element();
-                        database.deleteById(del.getId(), login);
+                        database.deleteById(del.getId(), command.getLogin());
                         manager.getCollection().removeIf(collection -> collection.getId().equals(del.getId()));
                         sendPool.submit(new Sender(key, "Первый элемент коллекции из созданных вами удален"));
                     } else {

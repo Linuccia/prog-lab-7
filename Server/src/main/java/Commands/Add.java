@@ -4,6 +4,7 @@ import DataClasses.Product;
 import ProgramManager.CollectionManager;
 import ProgramManager.Database;
 import ProgramManager.Sender;
+import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.sql.SQLException;
@@ -24,18 +25,16 @@ public class Add extends AbsCommand {
      * @param commandPool
      * @param sendPool
      * @param key
-     * @param product
-     * @param login
      */
     @Override
-    public void execute(ExecutorService commandPool, ExecutorService sendPool, SelectionKey key, Product product, String login) {
+    public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable add = () -> {
             try{
                 Integer id = database.getIdSeq();
-                product.setId(id);
-                product.setLogin(login);
-                manager.getCollection().add(product);
-                database.add(product, id, login);
+                command.getProduct().setId(id);
+                command.getProduct().setLogin(command.getLogin());
+                manager.getCollection().add(command.getProduct());
+                database.add(command.getProduct(), id, command.getLogin());
                 sendPool.submit(new Sender(key, "Элемент коллекции успешно добавлен"));
             } catch (SQLException e){
                 sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));

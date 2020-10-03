@@ -38,7 +38,8 @@ public class CommandManager {
                 }
             } else {
                 if (database.authorization(command)) {
-                    switch (command.getCommand()) {
+                    manager.commandMap.get(command.getCommand()).execute(command, commandPool, sendPool, key);
+                    /*switch (command.getCommand()) {
                         case "help":
                         case "info":
                         case "show":
@@ -72,7 +73,7 @@ public class CommandManager {
                             manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getPerson());
                         }
                         break;
-                    }
+                    }*/
                     System.out.println("Выполнена команда " + command.getCommand());
                 } else {
                     sendPool.submit(new Sender(key, "Ты зачем пытаешься меня обхитрить?"));
