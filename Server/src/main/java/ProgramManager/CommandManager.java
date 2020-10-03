@@ -74,6 +74,8 @@ public class CommandManager {
                         break;
                     }
                     System.out.println("Выполнена команда " + command.getCommand());
+                } else {
+                    sendPool.submit(new Sender(key, "Ты зачем пытаешься меня обхитрить?"));
                 }
             }
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {

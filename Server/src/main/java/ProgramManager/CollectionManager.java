@@ -14,6 +14,14 @@ public class CollectionManager {
     public Map<String, AbsCommand> commandMap;
     private Lock lock = new ReentrantLock();
 
+    public PriorityQueue<Product> getCollection(){
+        lock.lock();
+        try {
+            return collection;
+        } finally {
+            lock.unlock();
+        }
+    }
 
     public void getCommands(CollectionManager manager, Database database){
         commandMap = new HashMap<>();
@@ -58,21 +66,16 @@ public class CollectionManager {
      * @throws ClassNotFoundException
      */
     public String load(String file, Database database) throws ClassNotFoundException {
-        lock.lock();
-        try {
-            try{
-                collection = database.load(file);
-            } catch (IOException e){
-                System.out.println("Ошибка подключения к базе данных");
-                return "Файл с properties базы данных не найден";
-            } catch (SQLException e){
-                e.printStackTrace();
-                System.out.println("Ошибка поключения к базе данных");
-                return "Ошибка подключения сервера к базе данных";
-            }
-            return null;
-        } finally {
-            lock.unlock();
+        try{
+            collection = database.load(file);
+        } catch (IOException e){
+            System.out.println("Ошибка подключения к базе данных");
+            return "Файл с properties базы данных не найден";
+        } catch (SQLException e){
+            e.printStackTrace();
+            System.out.println("Ошибка поключения к базе данных");
+            return "Ошибка подключения сервера к базе данных";
         }
+        return null;
     }
 }
