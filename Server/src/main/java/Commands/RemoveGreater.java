@@ -28,20 +28,25 @@ public class RemoveGreater extends AbsCommand {
     @Override
     public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable removegreater = () -> {
-            if (!(manager.getCollection().size() == 0)) {
-                try {
-                    database.deleteGreater(command.getArg(), command.getLogin());
-                    int oldSize = manager.getCollection().size();
-                    if (manager.getCollection().removeIf(collection -> collection.getPrice() > command.getArg() && collection.getLogin().equals(command.getLogin()))) {
-                        sendPool.submit(new Sender(key, "Был/о удален/о " + (oldSize - manager.collection.size()) + " элемент/ов коллекции"));
-                    } else {
-                        sendPool.submit(new Sender(key, "Ни одного элемента не удалено"));
+            manager.lock.lock();
+            try {
+                if (!(manager.collection.size() == 0)) {
+                    try {
+                        database.deleteGreater(command.getArg(), command.getLogin());
+                        int oldSize = manager.collection.size();
+                        if (manager.collection.removeIf(collection -> collection.getPrice() > command.getArg() && collection.getLogin().equals(command.getLogin()))) {
+                            sendPool.submit(new Sender(key, "Был/о удален/о " + (oldSize - manager.collection.size()) + " элемент/ов коллекции"));
+                        } else {
+                            sendPool.submit(new Sender(key, "Ни одного элемента не удалено"));
+                        }
+                    } catch (SQLException e) {
+                        sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
                     }
-                } catch (SQLException e) {
-                    sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
+                } else {
+                    sendPool.submit(new Sender(key, "Коллекция пуста"));
                 }
-            } else {
-                sendPool.submit(new Sender(key, "Коллекция пуста"));
+            } finally {
+                manager.lock.unlock();
             }
         };
         commandPool.execute(removegreater);

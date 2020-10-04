@@ -30,10 +30,11 @@ public class RemoveFirst extends AbsCommand {
     @Override
     public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable removefirst = () -> {
+            manager.lock.lock();
             try{
-                if (!(manager.getCollection().size() == 0)){
+                if (!(manager.collection.size() == 0)){
                     PriorityQueue<Product> colCopy = new PriorityQueue<>();
-                    for (Product p: manager.getCollection()) {
+                    for (Product p: manager.collection) {
                         if (p.getLogin().equals(command.getLogin())) {
                             colCopy.add(p);
                         }
@@ -41,7 +42,7 @@ public class RemoveFirst extends AbsCommand {
                     if (!(colCopy.size() == 0)) {
                         Product del = colCopy.element();
                         database.deleteById(del.getId(), command.getLogin());
-                        manager.getCollection().removeIf(collection -> collection.getId().equals(del.getId()));
+                        manager.collection.removeIf(collection -> collection.getId().equals(del.getId()));
                         sendPool.submit(new Sender(key, "Первый элемент коллекции из созданных вами удален"));
                     } else {
                         sendPool.submit(new Sender(key, "Пока что нет ни одного созданного вами элемента"));
@@ -51,6 +52,8 @@ public class RemoveFirst extends AbsCommand {
                 }
             } catch (SQLException e){
                 sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
+            } finally {
+                manager.lock.unlock();
             }
         };
         commandPool.execute(removefirst);

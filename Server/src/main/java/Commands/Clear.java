@@ -28,15 +28,18 @@ public class Clear extends AbsCommand {
     @Override
     public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key){
         Runnable clear = () ->{
+            manager.lock.lock();
             try {
                 database.clear(command.getLogin());
-                if (manager.getCollection().removeIf(col -> col.getLogin().equals(command.getLogin()))) {
+                if (manager.collection.removeIf(col -> col.getLogin().equals(command.getLogin()))) {
                     sendPool.submit(new Sender(key, "Удалены все созданные вами элементы"));
                 } else {
                     sendPool.submit(new Sender(key, "В коллекции отсуствуют созданные вами элементы"));
                 }
             } catch (SQLException e) {
                 sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
+            } finally {
+                manager.lock.unlock();
             }
         };
         commandPool.execute(clear);

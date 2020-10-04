@@ -12,16 +12,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CollectionManager {
     public PriorityQueue<Product> collection= new PriorityQueue<>();
     public Map<String, AbsCommand> commandMap;
-    private Lock lock = new ReentrantLock();
+    public Lock lock = new ReentrantLock();
 
-    public PriorityQueue<Product> getCollection(){
-        lock.lock();
-        try {
-            return collection;
-        } finally {
-            lock.unlock();
-        }
-    }
 
     public void getCommands(CollectionManager manager, Database database){
         commandMap = new HashMap<>();

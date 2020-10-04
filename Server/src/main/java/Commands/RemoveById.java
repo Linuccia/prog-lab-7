@@ -28,18 +28,23 @@ public class RemoveById extends AbsCommand {
     @Override
     public void execute(SerCommand command, ExecutorService commandPool, ExecutorService sendPool, SelectionKey key) {
         Runnable removebyid = () -> {
-            if (!(manager.getCollection().size() == 0)) {
-                try {
-                    database.deleteById(command.getArg(), command.getLogin());
-                    if (manager.getCollection().removeIf(collection -> collection.getId().equals(command.getArg()) && collection.getLogin().equals(command.getLogin()))) {
-                        sendPool.submit(new Sender(key, "Элемент с данным id удален"));
-                    } else
-                        sendPool.submit(new Sender(key, "Элемента, созданного вами, с данным id не найдено"));
-                } catch (SQLException e) {
-                    sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
+            manager.lock.lock();
+            try {
+                if (!(manager.collection.size() == 0)) {
+                    try {
+                        database.deleteById(command.getArg(), command.getLogin());
+                        if (manager.collection.removeIf(collection -> collection.getId().equals(command.getArg()) && collection.getLogin().equals(command.getLogin()))) {
+                            sendPool.submit(new Sender(key, "Элемент с данным id удален"));
+                        } else
+                            sendPool.submit(new Sender(key, "Элемента, созданного вами, с данным id не найдено"));
+                    } catch (SQLException e) {
+                        sendPool.submit(new Sender(key, "Ошибка при работе с базой данных"));
+                    }
+                } else {
+                    sendPool.submit(new Sender(key, "Коллекция пуста"));
                 }
-            } else {
-                sendPool.submit(new Sender(key, "Коллекция пуста"));
+            } finally {
+                manager.lock.unlock();
             }
         };
         commandPool.execute(removebyid);

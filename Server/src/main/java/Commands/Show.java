@@ -2,7 +2,6 @@ package Commands;
 
 import DataClasses.Product;
 import ProgramManager.CollectionManager;
-import ProgramManager.Database;
 import ProgramManager.Sender;
 import ProgramManager.SerCommand;
 

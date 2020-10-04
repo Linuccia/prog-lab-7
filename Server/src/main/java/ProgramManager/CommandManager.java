@@ -39,41 +39,6 @@ public class CommandManager {
             } else {
                 if (database.authorization(command)) {
                     manager.commandMap.get(command.getCommand()).execute(command, commandPool, sendPool, key);
-                    /*switch (command.getCommand()) {
-                        case "help":
-                        case "info":
-                        case "show":
-                        case "average_of_price":{
-                            manager.commandMap.get(command.getCommand()).execute(commandPool,sendPool, key);
-                        }
-                        break;
-                        case "remove_first":
-                        case "clear": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool,sendPool, key, command.getLogin());
-                        }
-                        break;
-                        case "count_less_than_price": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getArg());
-                        }
-                        break;
-                        case "remove_by_id":
-                        case "remove_greater": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getArg(), command.getLogin());
-                        }
-                        break;
-                        case "add":
-                        case "add_if_min": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getProduct(), command.getLogin());
-                        }
-                        break;
-                        case "update": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getArg(), command.getProduct(), command.getLogin());
-                        }
-                        case "count_by_owner": {
-                            manager.commandMap.get(command.getCommand()).execute(commandPool, sendPool, key, command.getPerson());
-                        }
-                        break;
-                    }*/
                     System.out.println("Выполнена команда " + command.getCommand());
                 } else {
                     sendPool.submit(new Sender(key, "Ты зачем пытаешься меня обхитрить?"));

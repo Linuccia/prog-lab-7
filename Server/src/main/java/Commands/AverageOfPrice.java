@@ -2,14 +2,11 @@ package Commands;
 
 import DataClasses.Product;
 import ProgramManager.CollectionManager;
-import ProgramManager.Database;
 import ProgramManager.Sender;
 import ProgramManager.SerCommand;
 
 import java.nio.channels.SelectionKey;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
 
 public class AverageOfPrice extends AbsCommand {
